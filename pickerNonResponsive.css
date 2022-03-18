@@ -1,0 +1,24 @@
+.picker-item {
+    font-size: 1rem;
+    padding: 0.3rem;
+}
+.picker-picked {
+    font-size: 1.2rem;
+}
+.picker-title span.timespace {
+    margin: 0 30px;
+}
+@media (max-device-width: 768px) {
+    .picker-item {
+        font-size: 1.5rem;
+    }
+    .picker-picked {
+        font-size: 1.8rem;
+    }
+    .picker-title {
+        font-size: 2rem;
+    }
+    .picker-content {
+        max-width: 95%;
+    }
+}

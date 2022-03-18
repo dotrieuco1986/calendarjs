@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="Web site created using create-react-app"
+    />
+    <link rel="apple-touch-icon" href="logo192.png" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="manifest.json" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <title>React App</title>
+    <link href="./pickerNonResponsive.css" rel="stylesheet" />
+    <link href="./picker.min.css" rel="stylesheet" />
+    <script src="./picker-root.js"></script>
+    <script>
+      Number.prototype.addLeadingZero = function (length) {
+        let value = this.valueOf();
+        let str = String(Math.abs(value));
+        let i = str.length;
+        let result = "";
+        if (value < 0) {
+          result += "-";
+        }
+        while (i++ < length) {
+          result += "0";
+        }
+        return result + str;
+      };
+      function callPicker($this) {
+        let VALUE_PASS = [
+          1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60,
+          65, 70, 75, 80, 85, 90, 95, 100, 105, 110, 115, 120, 125, 130, 135,
+          140, 145, 150, 155, 160, 165, 170, 175, 180,
+        ];
+        let parent = $this.closest(".wrap-time-picker");
+        let elePicker = parent.querySelector(".js-time-picker");
+        let eleStart = parent.querySelector(".js-time-start");
+        let elePass = parent.querySelector(".js-time-pass");
+        let eleEnd = parent.querySelector(".js-time-end");
+
+        let valueBonus = VALUE_PASS.indexOf(parseInt(elePass.value));
+        if (valueBonus === -1) {
+          valueBonus = VALUE_PASS.indexOf(20);
+        }
+        let picker = new Picker(elePicker, {
+          format: "HH:mm V",
+          rows: 7,
+          valuebonus: valueBonus,
+          timeH: 8,
+          timeM: 45,
+          increment: {
+            hour: 1,
+            minute: 5,
+            valuebonus: 5,
+          },
+          callback: function (date, passTime) {
+            let time = new Date(date.getTime());
+            let valuePassTmp = passTime;
+            passTime = VALUE_PASS[passTime];
+            let endTime = new Date(date.getTime() + passTime * 60 * 1000);
+            let timeStart =
+              time.getHours().addLeadingZero(2) +
+              ":" +
+              time.getMinutes().addLeadingZero(2);
+            let timeEnd =
+              endTime.getHours().addLeadingZero(2) +
+              ":" +
+              endTime.getMinutes().addLeadingZero(2);
+
+            eleStart.value = timeStart;
+            eleStart.dispatchEvent(new Event("change"));
+            eleEnd.value = timeEnd;
+            eleEnd.dispatchEvent(new Event("change"));
+            elePass.value = passTime;
+            elePass.dispatchEvent(new Event("change"));
+
+            elePicker.value = "";
+            // disableScroll(false);
+          },
+          hide: function () {
+            setTimeout(function () {
+              picker.destroy();
+            }, 300);
+          },
+          text: {
+            title:
+              '時<span class="timespace">-</span>開始<span class="timespace">-</span>分',
+            valuebonus: "経過",
+            confirm: "設 定",
+            now: "現在時刻",
+            cancel: "戻 る",
+          },
+          translate(type, text) {
+            const suffixes = {
+              hour: "時",
+              minute: "分",
+              valuebonus: "分",
+            };
+            return Number(text) + suffixes[type];
+          },
+          customValue: {
+            valuebonus: VALUE_PASS,
+          },
+        });
+        picker.show();
+      }
+    </script>
+  </head>
+  <body>
+    <div class="wrap-box wrap-time-picker">
+      <input
+        type="text"
+        name="1st_sun_start"
+        class="input-custom input-time js-time-start"
+        id="1st_sun_start"
+        value="15"
+      />
+      <span class="time-range">
+        <input
+          type="text"
+          name="1st_sun_pass"
+          class="input-custom input-blue input-time-range js-time-pass"
+          id="1st_sun_pass"
+          value="50"
+        />
+      </span>
+      <input
+        type="text"
+        name=""
+        class="input-custom input-time js-time-end"
+        id="1st_sun_start_end"
+        value="39"
+      />
+      <input type="hidden" name="" class="js-time-picker" value="" />
+      <button
+        class="icon-time js-choose-time"
+        onclick="callPicker(this)"
+        type="submit"
+      >
+        choose
+      </button>
+    </div>
+  </body>
+</html>
